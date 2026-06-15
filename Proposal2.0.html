@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise For You ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-rose: #ff7597;
+            --soft-pink: #ffeef2;
+            --deep-love: #d63384;
+            --envelope-color: #ffcad4;
+            --envelope-dark: #f1abb9;
+            --dreamy-bg: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 50%, #f9bec7 100%);
+            --text-dark: #4a4a4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--dreamy-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Floating Hearts Background --- */
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 117, 151, 0.4);
+            animation: floatUp 6s linear infinite;
+            font-size: 1.5rem;
+            bottom: -50px;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Envelope Opening System --- */
+        .envelope-wrapper {
+            height: 400px;
+            width: 400px;
+            background-color: transparent;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+            transition: transform 0.8s ease;
+        }
+
+        .envelope {
+            position: relative;
+            width: 350px;
+            height: 230px;
+            background-color: var(--envelope-color);
+            align-self: flex-end;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* Envelope Flap */
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 4;
+            border-top: 125px solid var(--envelope-dark);
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            transform-origin: top;
+            transition: transform 0.5s 0.6s ease;
+        }
+
+        /* Envelope Sides / Pocket */
+        .envelope::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            border-top: 115px solid transparent;
+            border-left: 175px solid var(--envelope-color);
+            border-right: 175px solid var(--envelope-color);
+            border-bottom: 115px solid var(--envelope-color);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* Flap Seal Heart Button */
+        .heart-seal {
+            position: absolute;
+            top: 105px;
+            left: 160px;
+            width: 30px;
+            height: 30px;
+            background: var(--deep-love);
+            z-index: 5;
+            transform: rotate(45deg);
+            cursor: pointer;
+            transition: transform 0.5s ease, opacity 0.3s 0.6s;
+            animation: beat 1.2s infinite;
+        }
+
+        .heart-seal::before, .heart-seal::after {
+            content: "";
+            width: 30px;
+            height: 30px;
+            background: var(--deep-love);
+            border-radius: 50%;
+            position: absolute;
+        }
+        .heart-seal::before { top: -15px; left: 0; }
+        .heart-seal::after { left: -15px; top: 0; }
+
+        @keyframes beat {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.15); }
+        }
+
+        /* Inside Mini Card */
+        .card-inner {
+            position: absolute;
+            bottom: 5px;
+            left: 15px;
+            width: 320px;
+            height: 210px;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1;
+            padding: 25px 20px;
+            text-align: center;
+            border-radius: 12px;
+            transition: transform 0.8s ease, width 0.5s 0.8s, height 0.5s 0.8s, left 0.5s 0.8s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card-inner h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: var(--deep-love);
+            margin-bottom: 10px;
+            white-space: nowrap;
+        }
+
+        .card-inner p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        /* --- Envelope Active Open States --- */
+        .envelope-wrapper.open .envelope::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope-wrapper.open .card-inner {
+            transform: translateY(-180px);
+            width: 450px;
+            height: 280px;
+            left: -50px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.15);
+            border-radius: 24px;
+        }
+
+        .envelope-wrapper.open .card-inner h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .envelope-wrapper.open .card-inner p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .envelope-wrapper.open .heart-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Main App Layout Screens --- */
+        .screen {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.15);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1, .romantic-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--deep-love);
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            background: linear-gradient(45deg, var(--primary-rose), var(--deep-love));
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(214, 51, 132, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(214, 51, 132, 0.5);
+        }
+
+        /* --- Story Timeline --- */
+        .timeline {
+            margin: 30px 0;
+            text-align: left;
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px dashed var(--primary-rose);
+        }
+
+        .timeline-item {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '❤️';
+            position: absolute;
+            left: -32px;
+            top: 2px;
+            background: white;
+            border-radius: 50%;
+            padding: 2px;
+            font-size: 0.8rem;
+        }
+
+        .timeline-date {
+            font-weight: 600;
+            color: var(--deep-love);
+            font-size: 0.9rem;
+        }
+
+        /* --- Photo Gallery --- */
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            height: 300px;
+            margin: 0 auto 30px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            object-fit: cover;
+            left: 0;
+            top: 0;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* --- Proposal Section --- */
+        .proposal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            position: relative;
+            min-height: 80px;
+        }
+
+        #btnNo {
+            background: #fff;
+            color: var(--text-dark);
+            border: 1px solid #ccc;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            position: absolute;
+        }
+
+        #btnYes {
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .envelope-wrapper.open .card-inner { width: 330px; left: -15px; padding: 20px 15px; }
+            .envelope-wrapper.open .card-inner h1 { font-size: 2.8rem; }
+            .envelope-wrapper.open .card-inner p { font-size: 0.95rem; }
+            h1, .romantic-title { font-size: 3rem; }
+            .card { padding: 25px 20px; }
+            p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-bg" id="heartBg"></div>
+
+    <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="envelope">
+            <div class="heart-seal" onclick="openEnvelope()" title="Click to open"></div>
+            <div class="card-inner">
+                <h1>Hello Beautiful...</h1>
+                <p>I built something incredibly special just for you. Take a deep breath and step inside whenever you're ready.</p>
+                <button class="btn" onclick="startSurprise()">Start the Surprise ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="screen hidden" id="screen2">
+        <div class="card">
+            <h2 class="romantic-title">To My Favorite Person</h2>
+            <p>From the moment you walked into my life, everything changed. You brought a warmth and happiness I never knew existed, turning ordinary days into unforgettable adventures.</p>
+            
+            <div class="gallery-container">
+                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=500" class="slide active" alt="Memory 1">
+                <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=500" class="slide" alt="Memory 2">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=500" class="slide" alt="Memory 3">
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">The Day We Met</div>
+                    <p style="margin:0; font-size:0.95rem;">When the stars aligned and I first got to see that radiant smile.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Our First Date</div>
+                    <p style="margin:0; font-size:0.95rem;">Losing track of time completely just talking and laughing with you.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Every Single Day Since</div>
+                    <p style="margin:0; font-size:0.95rem;">Realizing that my favorite place in the entire world is right next to you.</p>
+                </div>
+            </div>
+
+            <button class="btn" onclick="showProposal()">Continue Our Journey ❤️</button>
+        </div>
+    </section>
+
+    <section class="screen hidden" id="screen3">
+        <div class="card">
+            <h1 style="font-size: 4.5rem; margin-bottom: 10px;">The Big Question...</h1>
+            <p style="font-size: 1.3rem; font-weight: 400; color: var(--deep-love);">Will You Be My Girlfriend? ❤️</p>
+            
+            <div class="proposal-buttons">
+                <button class="btn" id="btnYes" onclick="sayYes()">Yes, A Million Times!</button>
+                <button class="btn" id="btnNo" onmouseover="evadeNo()" onclick="evadeNo()">No</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="screen hidden" id="screen4">
+        <div class="card">
+            <h1 id="finalTitle" style="display: flex; align-items: center; justify-content: center; gap: 15px;">YAY! <span style="font-size: 3.5rem;">❤️</span></h1>
+            <p id="finalMessage">You've made me the happiest person alive! I promise to love you, cherish you, and build an incredibly beautiful future together. Thank you for saying yes! 🥰</p>
+            <div style="font-size: 3.5rem; margin-top: 20px; display: flex; justify-content: center; gap: 15px; align-items: center;">
+                <span>🥰</span>
+                <span style="font-size: 2.8rem;">👩‍❤️‍👨</span>
+                <span>✨</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- Envelope Reveal ---
+        function openEnvelope() {
+            document.getElementById('envelopeWrapper').classList.add('open');
+        }
+
+        // --- Screen Transitions ---
+        function startSurprise() {
+            document.getElementById('envelopeWrapper').classList.add('hidden');
+            document.getElementById('screen2').classList.remove('hidden');
+            startSlideshow();
+        }
+
+        function showProposal() {
+            document.getElementById('screen2').classList.add('hidden');
+            document.getElementById('screen3').classList.remove('hidden');
+            resetNoButton();
+        }
+
+        // --- Memories Slideshow ---
+        let currentSlide = 0;
+        function startSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            if(slides.length === 0) return;
+            
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 3000);
+        }
+
+        // --- Ambient Background Hearts ---
+        function createHeart() {
+            const heartBg = document.getElementById('heartBg');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            const shapes = ['❤️', '💖', '✨', '🌸', '💕'];
+            heart.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            heart.style.fontSize = Math.random() * 1.5 + 1 + 'rem';
+            
+            heartBg.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
+        setInterval(createHeart, 400);
+
+        // --- RUNAWAY "NO" BUTTON ---
+        const noBtn = document.getElementById('btnNo');
+        
+        function evadeNo() {
+            const x = Math.random() * 250 - 125; 
+            const y = Math.random() * 120 - 60;   
+            
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function resetNoButton() {
+            noBtn.style.transform = 'translate(100px, 0px)'; 
+        }
+        noBtn.style.left = 'unset'; 
+        noBtn.style.position = 'relative';
+
+        // --- Success Celebration ---
+        function sayYes() {
+            document.getElementById('screen3').classList.add('hidden');
+            document.getElementById('screen4').classList.remove('hidden');
+
+            // 15 seconds of intense confetti showers
+            var duration = 15 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff7597', '#d63384', '#ffced6']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff7597', '#d63384', '#ffced6']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+</html>
